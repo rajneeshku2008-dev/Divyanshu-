@@ -23,13 +23,35 @@ export default function App() {
 
   useEffect(() => {
     // Hidden URL trigger for Admin Panel
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('admin') === 'true') {
-      setIsAdminOpen(true);
-      // Clean up URL
-      const newUrl = window.location.pathname + window.location.hash;
-      window.history.replaceState({}, '', newUrl);
-    }
+    const checkAdminParam = () => {
+      const params = new URLSearchParams(window.location.search);
+      const adminVal = params.get('admin')?.toLowerCase();
+      
+      if (adminVal === 'true') {
+        console.log("Admin trigger detected via URL.");
+        setIsAdminOpen(true);
+        // Clean up URL to keep it hidden
+        const newUrl = window.location.pathname + window.location.hash;
+        window.history.replaceState({}, '', newUrl);
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Secret Key Combination: Ctrl+Shift+A or Cmd+Shift+A
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'A') {
+        console.log("Admin trigger detected via keyboard shortcut.");
+        setIsAdminOpen(true);
+      }
+    };
+
+    checkAdminParam();
+    window.addEventListener('popstate', checkAdminParam);
+    window.addEventListener('keydown', handleKeyDown);
+    
+    return () => {
+      window.removeEventListener('popstate', checkAdminParam);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   const startQuiz = () => setView('quiz');
