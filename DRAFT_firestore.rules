@@ -1,0 +1,56 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 0. Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helpers ---
+    function isSignedIn() { return request.auth != null; }
+    function isAdmin() { 
+      return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)); 
+    }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+
+    // --- Entities ---
+
+    // Credits Cards
+    match /cards/{cardId} {
+      allow read: if true; // Publicly readable for recommendations
+      allow create: if isAdmin() && isValidCard(incoming()) && isValidId(cardId);
+      allow update: if isAdmin() && isValidCard(incoming()) && (
+        // Admins can update all fields
+        incoming().diff(existing()).affectedKeys().hasOnly([
+          'name', 'issuer', 'type', 'bonus', 'annualFee', 
+          'creditScore', 'features', 'referralUrl', 'imageUrl', 'incomeRequirement'
+        ])
+      );
+      allow delete: if isAdmin();
+    }
+
+    // Admins Whitelist
+    match /admins/{userId} {
+      // Only existing admins can add new admins
+      allow read: if isSignedIn();
+      allow write: if false; // Manual bootstrap or Cloud Function based adding only for security
+    }
+
+    // --- Validation Helpers ---
+
+    function isValidCard(data) {
+      return data.keys().hasAll(['name', 'issuer', 'type', 'annualFee', 'creditScore']) &&
+             data.name is string && data.name.size() <= 100 &&
+             data.issuer is string && data.issuer.size() <= 100 &&
+             data.type in ['Travel', 'Cashback', 'Business', 'Student'] &&
+             data.annualFee is number && data.annualFee >= 0 &&
+             data.creditScore in ['Excellent', 'Good', 'Fair', 'Poor'] &&
+             (!('referralUrl' in data) || (data.referralUrl is string && data.referralUrl.size() <= 500)) &&
+             (!('imageUrl' in data) || (data.imageUrl is string && data.imageUrl.size() <= 500)) &&
+             (!('features' in data) || (data.features is list && data.features.size() <= 10));
+    }
+  }
+}

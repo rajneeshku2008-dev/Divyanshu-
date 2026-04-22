@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --color-brand-primary: #f43f5e;
+  --color-brand-secondary: #6366f1;
+  --color-brand-dark: #0f172a;
+}
+
+@layer base {
+  body {
+    @apply bg-[#fafafa] text-brand-dark antialiased selection:bg-brand-primary selection:text-white;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display font-bold tracking-tight;
+  }
+}
+
+.glass-surface {
+  @apply bg-white/70 backdrop-blur-xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.05)];
+}
+
+.card-unique {
+  @apply bg-white rounded-[2rem] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] transition-all duration-500 overflow-hidden;
+}
+
+.btn-vibrant {
+  @apply bg-brand-primary hover:bg-rose-600 text-white font-bold py-4 px-10 rounded-2xl transition-all shadow-[0_10px_20px_rgba(244,63,94,0.2)] hover:shadow-[0_10px_30px_rgba(244,63,94,0.4)] flex items-center justify-center gap-2 hover:-translate-y-0.5 active:translate-y-0;
+}
+
+.btn-outline-unique {
+  @apply bg-transparent hover:bg-slate-50 text-brand-dark border-2 border-slate-200 font-bold py-4 px-10 rounded-2xl transition-all flex items-center justify-center gap-2 hover:-translate-y-0.5 active:translate-y-0;
+}
+
+.quiz-option-vibrant {
+  @apply w-full p-6 text-left border-2 border-slate-100 rounded-3xl bg-white hover:border-brand-primary hover:shadow-lg transition-all duration-300 flex items-center justify-between;
+}
+
+.quiz-option-vibrant.selected {
+  @apply border-brand-primary bg-rose-50/30 ring-4 ring-rose-50;
+}
+
+.badge-unique {
+  @apply px-4 py-1.5 bg-rose-50 text-brand-primary text-[10px] font-black uppercase tracking-[0.15em] rounded-full;
+}
+
+/* Custom Background Gradients */
+.bg-mesh {
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(244, 63, 94, 0.05) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.05) 0px, transparent 50%);
+}
+
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-primary to-rose-400;
+}
+

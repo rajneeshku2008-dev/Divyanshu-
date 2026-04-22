@@ -1,0 +1,44 @@
+{
+  "entities": {
+    "CreditCard": {
+      "title": "Credit Card",
+      "description": "Details of a credit card offer in the system.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier for the card" },
+        "name": { "type": "string", "description": "Name of the card" },
+        "issuer": { "type": "string", "description": "Bank or issuer name" },
+        "type": { "type": "string", "enum": ["Travel", "Cashback", "Business", "Student"] },
+        "bonus": { "type": "string", "description": "Introductory bonus offer" },
+        "annualFee": { "type": "number", "description": "Annual fee in USD" },
+        "creditScore": { "type": "string", "enum": ["Excellent", "Good", "Fair", "Poor"] },
+        "features": { "type": "array", "items": { "type": "string" } },
+        "referralUrl": { "type": "string", "format": "uri" },
+        "imageUrl": { "type": "string", "format": "uri" },
+        "incomeRequirement": { "type": "string", "enum": ["<$30K", "$30K-$60K", "$60K-$100K", "$100K+"] }
+      },
+      "required": ["name", "issuer", "type", "annualFee", "creditScore"]
+    },
+    "Admin": {
+      "title": "Administrator",
+      "description": "User with administrative privileges.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "addedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email"]
+    }
+  },
+  "firestore": {
+    "cards/{cardId}": {
+      "schema": "CreditCard",
+      "description": "Collection of all available credit cards."
+    },
+    "admins/{userId}": {
+      "schema": "Admin",
+      "description": "Whitelist of users with admin access."
+    }
+  }
+}
